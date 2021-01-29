@@ -1,0 +1,466 @@
+openapi: 3.0.0
+info:
+  title: skat-api
+  version: '1.0'
+  description: Backend for Skat Counter
+  contact:
+    name: keplusplus
+    email: ke@esudo.de
+  license:
+    name: MIT
+servers:
+  - url: 'http://localhost:8080/skat-api/v1'
+    description: Local dev environment
+paths:
+  /games:
+    get:
+      summary: ''
+      tags:
+        - Game
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: ''
+                items:
+                  $ref: '#/components/schemas/game'
+      operationId: get-games
+      description: Get games
+    post:
+      summary: ''
+      operationId: post-games
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/game'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              description: ''
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                playerNames:
+                  type: array
+                  uniqueItems: false
+                  minItems: 3
+                  items:
+                    type: string
+                    minLength: 1
+              required:
+                - name
+                - playerNames
+            examples: {}
+      tags:
+        - Game
+      description: Post game
+  '/games/{gameId}':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+    get:
+      summary: ''
+      tags:
+        - Game
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/game'
+      operationId: get-games-gameId
+      description: Get specific game
+    delete:
+      summary: ''
+      operationId: delete-games-gameId
+      responses:
+        '204':
+          description: No Content
+      tags:
+        - Game
+      description: Delete game
+    patch:
+      summary: ''
+      operationId: patch-games-gameId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/game'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+      tags:
+        - Game
+      description: Patch game
+  '/games/{gameId}/players':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+    get:
+      summary: ''
+      tags:
+        - Player
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/player'
+      operationId: get-games-gameId-players
+      description: Get players of a game
+    post:
+      summary: ''
+      operationId: post-games-gameId-players
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/player'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+      tags:
+        - Player
+      description: Post player to a game
+  '/games/{gameId}/players/{playerId}':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: playerId
+        in: path
+        required: true
+    get:
+      summary: ''
+      tags:
+        - Player
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/player'
+      operationId: get-games-gameId-players-playerId
+      description: Get specific player from a game
+    patch:
+      summary: ''
+      operationId: patch-games-gameId-players-playerId
+      responses:
+        '200':
+          description: OK
+      description: Patch specific player of a game
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name:
+                  type: string
+                points:
+                  type: number
+      tags:
+        - Player
+    delete:
+      summary: ''
+      operationId: delete-games-gameId-players-playerId
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                example-1:
+                  value:
+                    message: A game cannot have less than 3 players
+                    errors:
+                      - message: A game cannot have less than 3 players
+                        errorCode: game.min_players_violation
+      description: Delete specific player from a game
+      tags:
+        - Player
+  '/games/{gameId}/rounds':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+    get:
+      summary: ''
+      tags:
+        - Round
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/round'
+      operationId: get-games-gameId-rounds
+      description: Get rounds of a game
+    post:
+      summary: ''
+      operationId: post-games-gameId-rounds
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/round'
+      description: Post round to game
+      tags:
+        - Round
+  '/games/{gameId}/rounds/{roundId}':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: roundId
+        in: path
+        required: true
+    get:
+      summary: ''
+      tags:
+        - Round
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/round'
+      operationId: get-games-gameId-rounds-roundId
+      description: Get specific round
+    delete:
+      summary: ''
+      operationId: delete-games-gameId-rounds-roundId
+      responses:
+        '204':
+          description: No Content
+      description: Delete specific round
+      tags:
+        - Round
+  '/games/{gameId}/rounds/{roundId}/games/{roundGameId}':
+    parameters:
+      - schema:
+          type: string
+        name: gameId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: roundId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: roundGameId
+        in: path
+        required: true
+    put:
+      summary: ''
+      operationId: put-games-gameId-rounds-roundId-games-roundGameId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/round'
+      description: Put a round game to round
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                value:
+                  type: number
+                playerId:
+                  type: number
+                won:
+                  type: boolean
+              required:
+                - value
+                - playerId
+                - won
+      tags:
+        - Round game
+components:
+  schemas:
+    game:
+      type: object
+      description: ''
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        players:
+          type: array
+          uniqueItems: true
+          minItems: 3
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/player'
+        rounds:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/round'
+        created:
+          type: string
+          minLength: 1
+      required:
+        - _id
+        - name
+        - players
+        - rounds
+        - created
+    player:
+      type: object
+      title: player
+      additionalProperties: false
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+          minLength: 1
+        points:
+          type: number
+      required:
+        - id
+        - name
+        - points
+    roundGame:
+      type: object
+      title: round
+      additionalProperties: false
+      properties:
+        value:
+          type: number
+        playerId:
+          type: number
+        won:
+          type: boolean
+        updated:
+          type: string
+          minLength: 1
+        id:
+          type: number
+      required:
+        - id
+    round:
+      type: object
+      title: round
+      additionalProperties: false
+      properties:
+        games:
+          type: array
+          items:
+            $ref: '#/components/schemas/roundGame'
+        id:
+          type: number
+        inserted:
+          type: string
+      required:
+        - games
+        - id
+        - inserted
+    error:
+      type: object
+      description: ''
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          minLength: 1
+        errors:
+          type: array
+          uniqueItems: false
+          minItems: 1
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                minLength: 1
+              message:
+                type: string
+                minLength: 1
+              errorCode:
+                type: string
+                minLength: 1
+            required:
+              - message
+              - errorCode
+      required:
+        - message
+        - errors
+tags:
+  - name: Game
+  - name: Player
+  - name: Round
+  - name: Round game
